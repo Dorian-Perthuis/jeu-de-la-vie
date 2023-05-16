@@ -11,12 +11,15 @@
 }
 
 body{
+  display: grid;
+  grid-template-areas: "header" "playground";
+  grid-template-rows: 1fr auto;
   overflow: hidden;
 }
 
 header{
   display: flex;
-  z-index: 5;
+  z-index: 150;
   padding: 0.5rem;
   background-color: rgb(15,12,14);
   gap: 50px;
