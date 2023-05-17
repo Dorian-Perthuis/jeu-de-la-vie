@@ -1,6 +1,5 @@
 import { Tile } from "./tile";
 import { SubGrid } from "./subGrid";
-import { subGridSmallSize } from "./utilObjects";
 
 export class GameGrid {
   //Attributs
@@ -21,6 +20,7 @@ export class GameGrid {
     this.tileGridSize = this.subSize * this.gridSize;
     this.generateTiles();
     this.generateLife();
+    this.updateTilesToBorderLess();
     this.generateSubGrid();
     this.setPause();
     this.mainLoop();
@@ -60,6 +60,27 @@ export class GameGrid {
     }
   }
 
+  private updateTilesToBorderLess(){
+    //Top
+    let top = [...this.tiles[this.tileGridSize-1]];
+    top.push(this.tiles[this.tileGridSize-1][0]);
+    top.unshift(this.tiles[this.tileGridSize-1][this.tileGridSize-1]);
+
+    //Bottom
+    let bottom = [...this.tiles[0]];
+    bottom.push(this.tiles[0][0]);
+    bottom.unshift(this.tiles[0][this.tileGridSize-1]);
+
+    //Left and Right
+    this.tiles.forEach((line) =>{
+      line.push(line[0]);
+      line.unshift(line[this.tileGridSize-1]);
+    });
+
+    this.tiles.unshift(top);
+    this.tiles.push(bottom);
+  }
+
   //Créer les subGrid pour permettre la communication entre Tile.
   private generateSubGrid() {
     for (let y = 0; y < this.gridSize; y++) {
@@ -67,8 +88,7 @@ export class GameGrid {
       for (let x = 0; x < this.gridSize; x++) {
         let subGridID: string = `${x}-${y}`;
         let subGridTiles = this.getSubGridTiles(x, y);
-        let smallSize = this.getSmallSize(x, y);
-        let subGrid = new SubGrid(subGridID, subGridTiles, smallSize, this);
+        let subGrid = new SubGrid(subGridID, subGridTiles, this);
         line.push(subGrid);
       }
       this.subGrids.push(line);
@@ -79,28 +99,11 @@ export class GameGrid {
     subGridX: number,
     subGridY: number
   ): Array<Array<Tile>> {
-    let sy: number = Math.max(subGridY * this.subSize - 1, 0); //Never below 0
-    let ey: number = Math.min(
-      (subGridY + 1) * this.subSize + 1,
-      this.tileGridSize
-    ); //Never above tileGridSize
-    let sx: number = Math.max(subGridX * this.subSize - 1, 0); //Never below 0
-    let ex: number = Math.min(
-      (subGridX + 1) * this.subSize + 1,
-      this.tileGridSize
-    ); //Never above tileGridSize
+    let sy: number = subGridY * this.subSize;
+    let ey: number = (subGridY + 1) * this.subSize + 2;
+    let sx: number = subGridX * this.subSize;
+    let ex: number = (subGridX + 1) * this.subSize + 2;
     return this.tiles.slice(sy, ey).map((i) => i.slice(sx, ex));
-  }
-
-  private getSmallSize(subGridX: number, subGridY: number): subGridSmallSize {
-    let smallSize: subGridSmallSize = {
-      sy: subGridY * this.subSize - 1 < 0 ? 0 : 1,
-      sx: subGridX * this.subSize - 1 < 0 ? 0 : 1,
-      ey: this.subSize + (subGridY * this.subSize - 1 < 0 ? 0 : 1),
-      ex: this.subSize + (subGridX * this.subSize - 1 < 0 ? 0 : 1),
-    };
-
-    return smallSize;
   }
 
   setStart() {
