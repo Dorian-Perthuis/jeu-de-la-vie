@@ -4,7 +4,7 @@ let root = document.documentElement;
 let playground = document.getElementsByClassName("playground")[0];
 let btnPause = document.getElementById("btnPause")!;
 let btnStart = document.getElementById("btnStart")!;
-let gameGrid = new GameGrid(playground, 15, 5);
+let gameGrid = new GameGrid(playground, 5, 10);
 let tileSize = 30;
 
 btnPause.addEventListener("click", () => {

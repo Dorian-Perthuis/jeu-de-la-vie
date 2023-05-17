@@ -1,11 +1,10 @@
-import { MyWorkerMessage, subGridSize, subGridSmallSize } from "./utilObjects";
+import { MyWorkerMessage, subGridSize } from "./utilObjects";
 
 let ID: string;
 let tiles : Array<Array<TileWorker>> = [];
 let tileNeigbours : Array<Array<number>> = [];
 
 let getSize:subGridSize;
-let sendSize: subGridSmallSize;
 let subgridPort:MessagePort;
 let tilesPort:MessagePort;
 let isTileAlive: boolean;
@@ -23,7 +22,6 @@ addEventListener('connect', (event:any) => {
                 subgridPort = port;
                 ID = mes.data.payload.id;
                 getSize = mes.data.payload.bigSize;
-                sendSize = mes.data.payload.smallSize;
                 tiles = [...Array(getSize.heigh)].map(() => Array(getSize.width).fill(undefined));
                 tileNeigbours = [...Array(getSize.heigh)].map(()=> Array(getSize.width).fill(0));
             break;

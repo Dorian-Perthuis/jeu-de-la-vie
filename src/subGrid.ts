@@ -1,13 +1,12 @@
 import { GameGrid } from "./gameGrid";
 import { Tile } from "./tile";
-import { MyWorkerMessage, subGridSize, subGridSmallSize } from "./utilObjects";
+import { MyWorkerMessage, subGridSize } from "./utilObjects";
 
 export class SubGrid {
   ID: string;
   tiles: Array<Array<Tile>> = [];
   sharedWorker: SharedWorker;
   bigSize: subGridSize;
-  smallSize: subGridSmallSize;
   stable: boolean = true;
   active: boolean = false;
   gameGrid: GameGrid;
@@ -15,13 +14,11 @@ export class SubGrid {
   constructor(
     ID: string,
     tiles: Array<Array<Tile>>,
-    smallSize: subGridSmallSize,
     gameGrid: GameGrid
   ) {
     this.ID = ID;
     this.tiles = tiles;
     this.bigSize = { heigh: tiles.length, width: tiles[0].length };
-    this.smallSize = smallSize;
     this.gameGrid = gameGrid;
 
     this.sharedWorker = new SharedWorker("./src/worker.ts", ID);
@@ -50,8 +47,7 @@ export class SubGrid {
       type: "init",
       payload: {
         id: this.ID,
-        bigSize: this.bigSize,
-        smallSize: this.smallSize,
+        bigSize: this.bigSize
       },
     });
   }
@@ -67,8 +63,8 @@ export class SubGrid {
   }
 
   private assignSubgridID() {
-    for (let y = this.smallSize.sy; y < this.smallSize.ey; y++) {
-      for (let x = this.smallSize.sx; x < this.smallSize.ex; x++) {
+    for (let y = 1; y < this.bigSize.heigh-1; y++) {
+      for (let x = 1; x < this.bigSize.width-1; x++) {
         let tile: Tile = this.tiles[y][x];
         let pos = { x: x, y: y };
         tile.setSubgridData(this.ID, pos);
