@@ -21,7 +21,7 @@ export class SubGrid {
     this.bigSize = { heigh: tiles.length, width: tiles[0].length };
     this.gameGrid = gameGrid;
 
-    this.sharedWorker = new SharedWorker(new URL("./worker.js", import.meta.url), /* @vite-ignore */ ID);
+    this.sharedWorker = new SharedWorker(new URL("./worker.ts", import.meta.url), {type:'module'});
 
     this.initWorker();
     this.assignWorker();
